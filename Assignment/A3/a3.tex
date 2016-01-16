@@ -1,0 +1,310 @@
+\RequirePackage[l2tabu,orthodox]{nag}  % warn about common LaTeX pitfalls
+\RequirePackage[ascii]{inputenc}  % input is 7-bit ASCII
+\RequirePackage{fixltx2e}  % fix LaTeX2e kernel bugs
+
+\documentclass[11pt,twoside]{article}
+\usepackage{color}
+\usepackage{calc}  % arithmetic in length parameters
+\usepackage{enumitem}  % more control over list formatting
+\usepackage{fancyhdr}  % simpler headers and footers
+\usepackage[margin=1in]{geometry}  % page layout
+\usepackage{lastpage}  % for last page number
+\usepackage{relsize}  % easier font size changes
+\usepackage[normalem]{ulem}  % smarter underlining
+\usepackage{url}  % verb-like typesetting of URLs
+%\usepackage{xfrac}  % nicer looking simple fractions for text and math
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+% Set up fonts.
+\usepackage[T1]{fontenc}  % use true 8-bit fonts
+\usepackage{slantsc}  % allow slanted small-caps
+\usepackage{microtype}  % perform various font optimizations
+% Use Palatino-based monospace instead of kpfonts' default.
+%\usepackage{newpxtext}
+\ttfamily
+\DeclareFontShape{T1}{\ttdefault}{m}{scsl}{<->ssub*\ttdefault/m/sc}{}
+\DeclareFontShape{T1}{\ttdefault}{b}{scsl}{<->ssub*\ttdefault/b/sc}{}
+% "Kepler" fonts.
+\usepackage[nott,notextcomp]{kpfonts}
+% Use curvier Latin Modern brackets instead of kpfonts' glyphs.
+\DeclareSymbolFont{lmsymb}     {OMS}{lmsy}{m}{n}
+\DeclareSymbolFont{lmlargesymb}{OMX}{lmex}{m}{n}
+\DeclareMathDelimiter{\rbrace}{\mathclose}{lmsymb}{"67}{lmlargesymb}{"09}
+\DeclareMathDelimiter{\lbrace}{\mathopen}{lmsymb}{"66}{lmlargesymb}{"08}
+
+% Page layout: stretch text to fill up page.
+\addtolength\footskip{.25\headheight}
+\flushbottom
+
+% Common list settings.
+
+% Common macros.
+\input{macros-263}
+\newcommand*\st{\mathrel{|}}  % "such that" for set extension
+
+% Headings.
+\pagestyle{fancy}
+\let\headrule\empty
+\let\footrule\empty
+\lhead{CSC\,263\,H1}
+\chead{\large\scshape Assignment \#\,3}
+\rhead{\scshape Fall 2015}
+\lfoot{\scshape Dept.\@ of Computer Science, University of Toronto,
+       St.~George Campus}
+\cfoot{}
+\rfoot{\scshape page \thepage\space of \pageref{LastPage}}
+
+
+\begin{document}
+
+\noindent
+\strong{Worth:}  8\%
+\hfill
+\strong{Due:}  By 5:59pm on Tuesday 3 November\\[2ex]
+\strong
+   {Remember to write
+    the \emph{full name} and \emph{student number}
+    of \emph{every group member}
+    prominently on your submission.}
+
+\medskip
+
+\noindent
+\rule{\textwidth}{.5pt}\\[1ex]
+\begingroup\slshape
+    Please read and understand the policy on Collaboration
+    given on the Course Information Sheet.
+    Then, to protect yourself,
+    list on the front of your submission
+    \strong{every} source of information
+    you used to complete this homework
+    (other than your own lecture and tutorial notes).
+    For example, indicate clearly
+    the \strong{name} of every student from another group
+    with whom you had discussions,
+    the \strong{title and sections} of every textbook you consulted
+    (including the course textbook),
+    the \strong{source} of every web document you used
+    (including documents from the course webpage),
+    \etc.\par
+        For each question, please write up detailed answers carefully.
+    Make sure that you use notation and terminology correctly, and
+    that you explain and justify what you are doing.
+    Marks \strong{will} be deducted
+    for incorrect or ambiguous use of notation and terminology, and
+    for making incorrect, unjustified, ambiguous, or vague claims
+    in your solutions.
+\endgroup\\
+\rule{\textwidth}{.5pt}
+% If you use this file as a template for your solution, please remove
+% (or comment out) the block above!
+
+\begin{enumerate}[leftmargin=0pt]
+
+
+
+
+
+\item 
+Give an algorithm for the following problem. The input is $ $ a sequence
+of $n$ numbers $\{ x_1, x_2, \ldots, x_n \}$, another sequence of
+$n$ numbers $\{y_1, y_2, \ldots, y_n \}$, and a number $z$. Your
+algorithm should determine whether or not
+$z \in \{ x_i + y_j \mid 1 \leq i, j \leq n \}$. You should use
+universal hashing families, and your algorithm should run in
+expected time $O(n)$.
+
+Provide justification that your algorithm is correct and runs
+in the required time. Be very clear about which theorems from class
+and/or the text you are using, and how.
+
+\textcolor{red}{\sc Answer:}
+\begin{itemize}[label = {}]
+\item First use universal hash maps all $x_{i} \ (1\leq i \leq n)$ to $n$ brackets. 
+ We know that {\sc Insert} for hashing takes $O(1)$; therefore, inserting $n$ keys would take $O(n)$.
+\item Then we run search for $z-y_{j} \ (1\leq j \leq n)$. It is clearly {\sc Search} runs in expected time O(1) by the properties of universal hashing.
+The worst case is $z \notin \{x_{i}+y_{j} |1\leq i,j \leq n\}$ which we have to loop through all possible  $y_{j} \ (1\leq j \leq n)$. 
+Since each {\sc Search} run in expected time $O(1)$, then worst case run time is in $O(n)$.
+\item  Algorithm should run in expected time $O(n)$.
+\end{itemize}
+
+
+\item
+We can implement a queue $Q$ using two stacks $H$ and $T$ as follows:
+Think of the stack $T$ as containing the ``tail'' of the queue
+        (i.e., the recently inserted items),
+        with the most recently inserted item at the top.
+Think of the stack $H$ as containing the ``head'' of the queue
+        (i.e., the older items),
+        with the oldest item of the queue at the top.
+Conceptually, $Q$ consists of $T$ and $H$ placed ``back-to-back''.
+%       (see figure below).
+
+To {\sc EnQueue} an item $x$ on $Q$, we actually {\sc Push} $x$ into $T$.
+To {\sc DeQueue} an item, we {\sc Pop} $H$, provided $H$ is not empty.
+If $H$ is empty, we transfer the items of $T$ to $H$ (by popping each item of $T$
+        and then pushing it into $H$), and then {\sc Pop} $H$.
+
+
+These algorithms are given below in pseudo-code.
+(We assume that initially the stacks $H$ and $T$ are empty, and
+        that the function {\sc StackEmpty}($T$) returns {\bf true} if $T$ is
+        an empty stack and {\bf false} otherwise.)
+
+\smallskip
+\begin{tabbing}
+MM\=MM\=MM\=MM\=MM\=MM\=MM\=MM\=MM\=MM\=MM\=MM\=\kill
+{\sc EnQueue}$(Q,x)$ \>\>\>\>\>\>\>\> {\sc DeQueue}$(Q)$\\
+\>{\sc Push}$(T,x)$  \>\>\>\>\>\>\>   \> {\bf if} {\sc StackEmpty}$(H)$ {\bf then}\\
+                     \>\>\>\>\>\>\>\> \>\> {\bf loop}\\
+                     \>\>\>\>\>\>\>\> \>\>\> {\bf exit when} {\sc StackEmpty}$(T)$\\
+                     \>\>\>\>\>\>\>\> \>\>\> $x$ := {\sc Pop}$(T)$\\
+                     \>\>\>\>\>\>\>\> \>\>\> {\sc Push}$(H,x)$\\
+                     \>\>\>\>\>\>\>\> \>\> {\bf end loop}\\
+                     \>\>\>\>\>\>\>\> \> {\bf end if}\\
+                     \>\>\>\>\>\>\>\> \> {\bf return} {\sc Pop}$(H)$\\
+\end{tabbing}
+%}
+
+\noindent
+Assume that each {\sc Push}, {\sc Pop} and {\sc StackEmpty} operation takes
+        $\Theta(1)$ time.
+
+\begin{enumerate}
+\item
+What is the worst-case time complexity of a single operation
+        in a sequence of $m$ {\sc EnQueue} and {\sc DeQueue} operations?
+Derive matching upper and lower bounds.
+That is, define an initial situation by describing what $H$ and $T$
+look like at the start, and then define a sequence of $m$ operations,
+where the sequence consists of {\sc EnQueue}'s and {\sc DeQueue}'s.
+Then show that one of the operations in the sequence (probably the last operation) will have
+the claimed worst-case time.
+For the upper bound, show that no operation in any $m$-operation sequence can ever
+take more time than the claimed worst-case time. \\
+
+\textcolor{red}{\sc Answer:}
+\begin{itemize}[label = {}]
+
+\item Assume $T$ is a stack of $n$ numbers, and $H$ is a stack of $y$ numbers, such that $n \geq 0 \land y \geq 0$.
+\item Assume there is a sequence of $m$ operations consisting of {\sc EnQueue}'s and {\sc DeQueue}'s.
+\item Case 1, for {\sc EnQueue} operation:
+	\begin{itemize}
+	\item  Each  {\sc EnQueue} operation in $m$ takes $\Theta(1)$ because it is simply pushing a number onto stack $T$, which by assumption takes $\Theta(1)$.
+	\end{itemize}
+\item Case 2, for {\sc DeQueue} operation:
+	\begin{itemize}
+	\item case 2.1: If stack $H$ is not empty, then {\sc DeQueue} operation in $m$ will take $\Theta(1)$  since it is just  a {\sc Pop} operation which takes $\Theta(1)$.
+	\item case 2.2: If stack $H$ is empty, then in the worst case, every operation except the last operation in $m$ is {\sc EnQueue}, then it will take $\Theta(2(m - 1 + n) + 1)=\Theta(m+n)$ time. The original $n$ number of elements in $T$ and the $(m-1)$ number of {\sc EnQueue}'s will be popped from $T$ and pushed into $H$, with each operation costing 2 executions. The last {\sc Pop} from $H$ will cost an additional 1 execution. \\
+	\\
+	This is the worst case because if {\sc DeQueue}  was not the last operation in $m$, then in case 2.2 {\sc DeQueue}  will take less than $2(m-1+n)+1$ operations . Let's assume that {\sc DeQueue} was $x$th operation in $m$, where $x$ is not the last operation. Then $x > 1$ and $2(m-1) > 2(m-x)$; hence,  $2(m-1+n) +1> 2(m-x+n)+1$.\\
+	The worst-case  of a single operation happens when $H$ is empty and $T$ has $n$ elements and sequence of m operations are $[ {\sc EnQueue}, {\sc EnQueue}, {\sc EnQueue}.... {\sc EnQueue},  {\sc DeQueue}]$ ($m-1$ {\sc EnQueue}'s follow by 1 {\sc DeQueue}) and the time complexity is in $\Theta(m+n)$.
+	\end{itemize}
+
+
+\end{itemize}
+\item
+Use the accounting method to prove
+that the amortised time complexity of each operation in 
+a sequence of $m$ {\sc EnQueue} and {\sc DeQueue} operations is $O(1)$.
+
+To solve this problem, first give a credit scheme indicating
+how many credits to allocate to each EnQueue and DeQueue operation.
+Secondly, state the credit invariant,
+and thirdly, prove the credit invariant. \\
+\textcolor{red}{\sc Answer:}
+\begin{itemize}[label = {}]
+\item Each  {\sc EnQueue} will charge 3 credits.
+\item Each {\sc DeQueue}  will change 1 credits.
+\item Each {\sc Push}  and {\sc Pop} cost 1 credit.
+\item
+\item Credit Invariant: At any step each element in $H$ will have 0 credit, each element in $T$ will have have 2 credits. \\ 
+\item Proof by induction:
+\item Base Case: Initially $H$ and $T$ are empty.
+\item Induction Step: Assume all elements in $H$ have 0 credit, all elements $T$ have 2 credits.
+	\begin{itemize}
+		\item Case 1: {\sc EnQueue} \\
+		When we call {\sc EnQueue}, $H$ remain unchanged. In $T$ {\sc EnQueue} charges 3 credits and cost 1 credit for {\sc Push} the element to $T$; hence the new item in $T$ has 2 credits.
+		\item Case 2: {\sc DeQueue} \\
+		 case 2.1: $H$ is not empty, then {\sc DeQueue} charges 1 credits and cost that 1 credit for {\sc Pop}  a element from $H$; hence,  the rest elements in $H$ remain unchanged. Also everything in $T$ remain unchanged.\\
+		 case 2.2: $H$ is empty,  every item in $T$ are popped and pushed onto $H$ which cost all their 2 credits. Then using the 1 credit charges from {\sc DeQueue} to {\sc Pop} a element from $H$. Now $T$ is empty and every item in $H$ has 0 credit. 
+	\end{itemize}
+\end{itemize}
+Thus invariant is always true, so total charge for sequence is upper bound on total on cost. Then total charge at most be $3n$ so amortized cost per operation is 3.
+
+\end{enumerate}
+
+\item
+
+
+Recall that the doubling method enables the implementation of
+a stack without placing a limit on the size of the stack, such that the
+amortized complexity of each operation is $O(1)$. Every time the array
+gets full, a new array is allocated whose size is twice the size of the
+old array, and the old array is copied to the new array.
+
+\begin{enumerate}
+\item 
+
+Suppose we change the implementation so that the size of the new array is 3/2 times the size of the old array. 
+What is the time complexity of a sequence of m operations in the worst-case? Justify your answer.\\
+\\
+\textcolor{red}{\sc Answer:}
+
+\begin{itemize}[label = {}]
+\item Idea: Charge each operation 4 credits.
+	\begin{itemize} 
+	\item 1 credit  (the ``append-credit'') will be spent when appending the element.
+	\item 1 credit (the ``copy-credit'') will be spent when copying the element to a new array.
+	\item  2 credits (the ``recharge-credits'') are  used to recharge the old elements(first $\frac{2}{3}$ of the list) that have spent their ``copy-credits''.
+	\end{itemize}	
+\item Credit Invariant: Each element in last $\frac{1}{3}$  of the array has 3 credits.\\
+	\begin{itemize}[label = {}]
+	\item Proof by induction:
+	\item Base Case: Initially array is empty.
+	\item Inductive Step: 
+		\begin{itemize}[label = {-}]
+		\item  Array is not full, then 1 credits is spend for append and 3 credits stored on the item; hence, Invariant satisfied.
+		\item  Array is full, then make a new array.  The last $\frac{1}{3}$  of the array using their ``copy-credit'' copy themselves to the new array 
+		and  ``recharge-credits'' copy all items in first $\frac{2}{3}$ of array to the new list. Then add new item 3 credits. Since the  last $\frac{1}{3}$  of the array
+		only have this newly added item with 3 credits; hence, Invariant satisfied.
+		\end{itemize}	
+	\end{itemize}
+\item 
+\item Therefore,  a charge of 4 credits is enough. Then time complexity of a sequence of $m$ operations in the worst-case is 4.
+\end{itemize}
+
+\item
+Suppose we change the implementation so that the size of the new array is 50 plus the size of the old array. What is the time complexity of a sequence of m
+operations in the worst-case? Justify your answer.\\
+\\
+\textcolor{red}{\sc Answer:}
+\begin{itemize}[label = {}]
+\item Idea: Charge each operation $\lceil \frac{n}{50} \rceil + 2$ credits, where n is the size of the old array.
+	\begin{itemize} 
+	\item 1 credit  (the ``append-credit'') will be spent when appending the element.
+	\item 1 credit (the ``copy-credit'') will be spent when copying the element to a new array.
+	\item  $\lceil \frac{n}{50} \rceil$ credits (the ``recharge-credits'') are  used to recharge the old elements (elements from old array) that have spent their ``copy-credits''.
+	\end{itemize}
+\item Credit Invariant: Each element in last $50$ elements of the array has $\lceil \frac{n}{50} \rceil + 1$ credits.\\
+	\begin{itemize}[label = {}]
+	\item Proof by induction:
+	\item Base Case: Initially array is empty.
+	\item Inductive Step: (suppose the size of the array is $n+50$, where $n$ is size of its previous array.)
+		\begin{itemize}[label = {-}] 
+		\item  Array is not full, then 1 credits is spend for append and $\lceil \frac{n}{50} \rceil + 1$ credits stored on the item; hence, Invariant satisfied.
+		\item  Array is full, then make a new array.  The last $50$ elements of the array use their ``copy-credit'' copy themselves to the new array 
+		and  ``recharge-credits'' copy all first $n$ items from array to the new list. Then add new item $\lceil \frac{n+50}{50} \rceil + 1$  credits. Since the  last 50 elements of the array
+		only have this newly added item with $\lceil \frac{n+50}{50} \rceil + 1$ credits and $n+50$ is size of its previous array; hence, Invariant satisfied.
+		\end{itemize}	
+	\end{itemize}
+\item 
+\item Therefore,  a charge of $\lceil \frac{n}{50} \rceil + 2$ credits is enough. Then time complexity of a sequence of $m$ operations in the worst-case is $O(n)$.	
+\end{itemize}
+
+\end{enumerate}
+
+\end{enumerate}
+
+\end{document}

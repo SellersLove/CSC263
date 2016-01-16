@@ -1,0 +1,391 @@
+\RequirePackage[l2tabu,orthodox]{nag}  % warn about common LaTeX pitfalls
+\RequirePackage[ascii]{inputenc}  % input is 7-bit ASCII
+\RequirePackage{fixltx2e}  % fix LaTeX2e kernel bugs
+
+\documentclass[11pt,twoside]{article}
+\usepackage{tikz}
+\usepackage{color}
+\usepackage{calc}  % arithmetic in length parameters
+\usepackage{enumitem}  % more control over list formatting
+\usepackage{fancyhdr}  % simpler headers and footers
+\usepackage[margin=1in]{geometry}  % page layout
+\usepackage{lastpage}  % for last page number
+\usepackage{relsize}  % easier font size changes
+\usepackage[normalem]{ulem}  % smarter underlining
+\usepackage{url}  % verb-like typesetting of URLs
+%\usepackage{xfrac}  % nicer looking simple fractions for text and math
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+% Set up fonts.
+\usepackage[T1]{fontenc}  % use true 8-bit fonts
+\usepackage{slantsc}  % allow slanted small-caps
+\usepackage{microtype}  % perform various font optimizations
+% Use Palatino-based monospace instead of kpfonts' default.
+%\usepackage{newpxtext}
+\ttfamily
+\DeclareFontShape{T1}{\ttdefault}{m}{scsl}{<->ssub*\ttdefault/m/sc}{}
+\DeclareFontShape{T1}{\ttdefault}{b}{scsl}{<->ssub*\ttdefault/b/sc}{}
+% "Kepler" fonts.
+\usepackage[nott,notextcomp]{kpfonts}
+% Use curvier Latin Modern brackets instead of kpfonts' glyphs.
+\DeclareSymbolFont{lmsymb}     {OMS}{lmsy}{m}{n}
+\DeclareSymbolFont{lmlargesymb}{OMX}{lmex}{m}{n}
+\DeclareMathDelimiter{\rbrace}{\mathclose}{lmsymb}{"67}{lmlargesymb}{"09}
+\DeclareMathDelimiter{\lbrace}{\mathopen}{lmsymb}{"66}{lmlargesymb}{"08}
+
+% Page layout: stretch text to fill up page.
+\addtolength\footskip{.25\headheight}
+\flushbottom
+
+
+% Headings.
+\pagestyle{fancy}
+\let\headrule\empty
+\let\footrule\empty
+\lhead{CSC\,263\,H1}
+\chead{\large\scshape Assignment \#\,2}
+\rhead{\scshape Fall 2015}
+\cfoot{}
+\rfoot{\scshape page \thepage\space of \pageref{LastPage}}
+
+
+\begin{document}
+
+\rule{\textwidth}{.5pt}
+% If you use this file as a template for your solution, please remove
+% (or comment out) the block above!
+
+
+\begin{enumerate}[leftmargin=0pt]
+\item 
+	\begin{enumerate}
+		\item 2 AVL trees are needed and every node correspond to a ``coloured pixels'' represented by triples 
+			$(x,y,c)$. $x$ coordinate, $y$ coordinate and colour $c \in (R, B ,G)$ are stored in every node.
+		\item We sort the AVL tree based on two keys $x,y$.  
+			\begin{itemize} [label={}]
+			\item First tree: \\
+				 For every node $A(x, y, c)$ in the tree, every node $B(x_b,y_b,c_b)$ in the left subtree has either $x_b < x$ or $(x_b = x) \wedge (y_b < y)$, and every node 
+				 $C(x_b, y_b, c_b)$ in the right subtree has either $x_b > x$ or $(x_b = x) \wedge (y_b > y)$. 
+			\item Second tree:\\
+				For every node $A(x, y, c)$ in the tree, every node $B(x_b,y_b,c_b)$ in the left subtree has either $y_b < y$ or $(y_b = y) \wedge (x_b < x)$, and every node 
+				 $C(x_b, y_b, c_b)$ in the right subtree has either $y_b > y$ or $(y_b = y) \wedge (x_b > x)$.				
+			\end{itemize}			
+		\item 
+			Clearly, both trees order the set  of pixels so that no two pixels have same rank. 
+			\begin{itemize}
+				\item	\proc{ReadColour}$(S, x, y)$:
+						\begin{itemize} [label={}]
+						\item First Tree: First search based on $x$ coordinate, for a root $A(x', y', c')$ with $x'>x$, then we go to left subtree, with $x'<x$ we go to right subtree, then based on 
+						$y$ coordinate for root with $(x'=x)\wedge (y'< y)$ we go to left subtree and with $(x'= x)\wedge (y'>y)$ we go to right subtree. Else, with $(x' = x) \wedge (y' = y)$ we just read the colour. 
+						Clearly, it satisfied BST property which mean we could return colours in worst case $\mathcal{O}(log(n))$.
+						\item
+						\item Second Tree: First search based on $y$ coordinate, for a root $A(x', y', c')$ with $y'>y$, then we go to left subtree, with $y'<y$ we go to right subtree, then based on 
+						$x$ coordinate for root with $(y'=y)\wedge (x'< x)$ we go to left subtree and with $(y'= y)\wedge (x'>x)$ we go to right subtree. Else, with $(x' = x) \wedge (y' = y)$ we just read the colour. 
+						Clearly, it satisfied BST property which mean we could return colours in worst case $\mathcal{O}(log(n))$.
+						\end{itemize}
+				\item	\proc{WriteColour}$(S, x, y, c)$: 
+						\begin{itemize} [label={}]
+						\item First Tree: First based on  $x$ coordinate,  if a root $A(x', y', c')$ with $x'>x$, then we go to left subtree or with $x'<x$ we go to right subtree. Then based on 
+						$y$ coordinate for root with $(x'=x)\wedge (y'< y)$ we go to left subtree and with $(x'= x)\wedge (y'>y)$ we go to right subtree. Once we reach a empty spot we add this triple $(x,y,c)$, or if we reach a 
+						node with $(x' = x) \wedge (y' = y)$, we replace the node with this triple $(x,y,c).$ Clearly, it satisfied BST property which mean we could write colour in worst case $\mathcal{O}(log(n))$.
+						\item
+						\item Second Tree: First based on  $y$ coordinate,  if a root $A(x', y', c')$ with $y'>y$, then we go to left subtree or with $y'<y$ we go to right subtree. Then based on 
+						$x$ coordinate for root with $(y'=y)\wedge (x'< x)$ we go to left subtree and with $(y'= y)\wedge (x'>x)$ we go to right subtree. Once we reach a empty spot we add this new triple $(x,y,c)$, or if we reach
+						a node with $(x' = x) \wedge (y' = y)$, we replace the node with this new triple $(x,y,c).$ Clearly, it satisfied BST property which mean we could write colour in worst case $\mathcal{O}(log(n))$.
+						\end{itemize}
+				\item	\proc{NextInRow}$(S, x, y)$: Using the first tree, first we using \proc{ReadColour}$(S, x, y)$ for $First \ Tree$ find the pixel $A$, then if the right child of $A$ is non-empty, get the minimal in the right child, else 						get the maximal in its parent's left tree. Clearly, it just like the find successor method for BST, since now it is a AVL tree the worst case $\mathcal{O}(log(n))$.
+				\item	\proc{NextInColumn}$(S, x, y)$: Similarly,  using the second tree, first we \proc{ReadColour}$(S, x, y)$ for for $Seond Tree$ find the pixel $A$, then if the right child of $A$ is non-empty, get the minimal in the 
+						right child, else get the maximal in its parent's left tree. Clearly, it just like the find successor method for BST, since now it is a AVL tree the worst case $\mathcal{O}(log(n))$.
+				\item	\proc{RowEmpty}$(S, x)$: Using the first tree, for a root $A(x', y', c')$ with $x'>x$, we go to left subtree, with $x'<x$ we go to right subtree, with $(x'=x)$ we return $Nonempty$, or return $empty$ if we reach 
+						the end of the tree. Cleary, it satisfied BST property which means we could return colours in worst case $\mathcal{O}(log(n))$.
+				\item	\proc{ColumnEmpty}$(S, y)$: Using the second tree, for a root $A(x', y', c')$ with $y'>y$, we go to left subtree, with $y'< y$ we go to right subtree, with $(y' = y)$ we return $Nonempty$, or return $empty$ if 
+						we reach the end of the tree. Since, it satisfied BST property and it is a AVL tree which means we could return colours in worst case $\mathcal{O}(log(n))$.
+			\end{itemize}
+	\end{enumerate}
+\item 
+	\begin{enumerate}
+		\item For every node $A$ we store 2 extra information, one is the total number of nodes in subtrees, 
+		the other is the sum of the key-value of subtrees. \\ 
+		Every node $A$ is represented by a triple $(Key, NumNodes_{subtrees}, Sum_{subtrees})$. \\
+		\item For insertion, suppose we insert a node $x$, and $x = (x.key, 1 , x.key)$ 
+			\begin{itemize}  [label={}]
+			\item
+			\item Insert(root, x):
+			\item \ \ \ \ if root = None: 
+			\item \ \ \ \ \ \ \ \ root $\leftarrow$ x
+			\item \ \ \ \ elif x.key < root.key:
+			\item \ \ \ \ \ \ \ \ root.numNodes += 1
+			\item \ \ \ \ \ \ \ \ root.sum += x.key
+			\item \ \ \ \ \ \ \ \ root.left $\leftarrow$ TreeInsert(root.left, x)
+			\item \ \ \ \ elif x.key > root.key:
+			\item \ \ \ \ \ \ \ \ root.numNodes += 1
+			\item \ \ \ \ \ \ \ \ root.sum += x.key
+			\item \ \ \ \ \ \ \ \ root.right $\leftarrow$ TreeInsert(root.right, x)
+			\item \ \ \ \ else: \textcolor{green} {\# x.key = root.key:}
+			\item \ \ \ \ \ \ \ \  replace root with x   \textcolor{green} {\# update x.left, x.right, x.sum
+				x.numNodes}
+			\item \ \ \ \ return root
+			\end{itemize}
+		After we done the insertion, when we do $Rotation$ to maintain AVL properties:\\
+		For left rotation around A:
+			\begin{itemize}  [label={}]
+			\item Case 1:
+                                \begin{center}
+                                        \begin{tikzpicture}[scale=0.2]
+                                                \tikzstyle{every node}+=[inner sep=0pt]
+                                                \draw [black] (23.4,-15.3) circle (3);
+                                                \draw (23.4,-15.3) node {$A$};
+                                                \draw [black] (17.2,-24.2) circle (3);
+                                                \draw (17.2,-24.2) node {$E$};
+                                                \draw [black] (30.2,-24.2) circle (3);
+                                                \draw (30.2,-24.2) node {$B$};
+                                                \draw [black] (24.5,-34.1) circle (3);
+                                                \draw (24.5,-34.1) node {$C$};
+                                                \draw [black] (36,-34.1) circle (3);
+                                                \draw (36,-34.1) node {$D$};
+                                                \draw [red] (36,-45.2) circle (3);
+                                                \draw (36,-45.2) node {$\textcolor{red}{New}$};
+                                                \draw [black] (59.2,-14.1) circle (3);
+                                                \draw (59.2,-14.1) node {$B$};
+                                                \draw [black] (53.5,-23.4) circle (3);
+                                                \draw (53.5,-23.4) node {$A$};
+                                                \draw [black] (66.8,-23.4) circle (3);
+                                                \draw (66.8,-23.4) node {$D$};
+                                                \draw [black] (49,-34.1) circle (3);
+                                                \draw (49,-34.1) node {$E$};
+                                                \draw [black] (57.8,-34.1) circle (3);
+                                                \draw (57.8,-34.1) node {$C$};
+                                                \draw [red] (66.8,-34.1) circle (3);
+                                                \draw (66.8,-34.1) node {$\textcolor{red}{New}$};
+                                                \draw [black] (21.69,-17.76) -- (18.91,-21.74);
+                                                \fill [black] (18.91,-21.74) -- (19.78,-21.37) -- (18.96,-20.8);
+                                                \draw [black] (25.22,-17.68) -- (28.38,-21.82);
+                                                \fill [black] (28.38,-21.82) -- (28.29,-20.88) -- (27.5,-21.48);
+                                                \draw [black] (28.7,-26.8) -- (26,-31.5);
+                                                \fill [black] (26,-31.5) -- (26.83,-31.06) -- (25.96,-30.56);
+                                                \draw [black] (31.72,-26.79) -- (34.48,-31.51);
+                                                \fill [black] (34.48,-31.51) -- (34.51,-30.57) -- (33.65,-31.07);
+                                                \draw [red] (36,-37.1) -- (36,-42.2);
+                                                \fill [red] (36,-42.2) -- (36.5,-41.4) -- (35.5,-41.4);
+                                                \draw (35.5,-39.65) node [left];
+                                                \draw [black] (23.4,-7.3) -- (23.4,-12.3);
+                                                \fill [black] (23.4,-12.3) -- (23.9,-11.5) -- (22.9,-11.5);
+                                                \draw [black] (59.2,-6.3) -- (59.2,-11.1);
+                                                \fill [black] (59.2,-11.1) -- (59.7,-10.3) -- (58.7,-10.3);
+                                                \draw [red] (57.63,-16.66) -- (55.07,-20.84);
+                                                \fill [red] (55.07,-20.84) -- (55.91,-20.42) -- (55.06,-19.9);
+                                                \draw [black] (52.34,-26.17) -- (50.16,-31.33);
+                                                \fill [black] (50.16,-31.33) -- (50.93,-30.79) -- (50.01,-30.4);
+                                                \draw (50.51,-27.81) node [left];
+                                                \draw [red] (54.62,-26.18) -- (56.68,-31.32);
+                                                \fill [red] (56.68,-31.32) -- (56.85,-30.39) -- (55.92,-30.76);
+                                                \draw (54.9,-29.64) node [left];
+                                                \draw [black] (61.1,-16.42) -- (64.9,-21.08);
+                                                \fill [black] (64.9,-21.08) -- (64.78,-20.14) -- (64.01,-20.77);
+                                                \draw [black] (66.8,-26.4) -- (66.8,-31.1);
+                                                \fill [black] (66.8,-31.1) -- (67.3,-30.3) -- (66.3,-30.3);
+                                                \draw (66.3,-28.75) node [left];
+                                        \end{tikzpicture}
+                                \end{center}
+                                Hence, we only need to update node $B$ and $A$.\\
+                                $temp.sum = A.sum$, $temp.numNodes = A.numNodes$;\\
+                                $A.sum = A.sum - B.sum + C.sum$, $A.numNodes = A.numNodes - B.numNodes + C.numNodes$;\\
+                                $B.sum = temp.sum$, $B.numNodes = temp.numNodes$.\\
+                          \item Case 2:
+                            \begin{center}
+                                    \begin{tikzpicture}[scale=0.2]
+                                            \tikzstyle{every node}+=[inner sep=0pt]
+                                            \draw [black] (18.5,-12) circle (3);
+                                            \draw (18.5,-12) node {$A$};
+                                            \draw [black] (2.7,-38.9) circle (3);
+                                            \draw (2.7,-38.9) node {$subtree$};
+                                            \draw [black] (25.6,-22.9) circle (3);
+                                            \draw (25.6,-22.9) node {$B$};
+                                            \draw [black] (19.2,-31.5) circle (3);
+                                            \draw (19.2,-31.5) node {$C$};
+                                            \draw [black] (36.5,-38.9) circle (3);
+                                            \draw (36.5,-38.9) node {$subtree$};
+                                            \draw [black] (13.3,-39.8) circle (3);
+                                            \draw (13.3,-39.8) node {$E$};
+                                            \draw [black] (25.6,-39.8) circle (3);
+                                            \draw (25.6,-39.8) node {$F$};
+                                            \draw [red] (25.6,-50.5) circle (3);
+                                            \draw (25.6,-50.5) node {$\textcolor{red}{new}$};
+                                            \draw [black] (61,-10.8) circle (3);
+                                            \draw (61,-10.8) node {$C$};
+                                            \draw [black] (48.7,-20.1) circle (3);
+                                            \draw (48.7,-20.1) node {$A$};
+                                            \draw [black] (73.4,-20.1) circle (3);
+                                            \draw (73.4,-20.1) node {$B$};
+                                            \draw [black] (57.3,-28.7) circle (3);
+                                            \draw (57.3,-28.7) node {$E$};
+                                            \draw [black] (65.5,-28.7) circle (3);
+                                            \draw (65.5,-28.7) node {$F$};
+                                            \draw [red] (65.5,-39.8) circle (3);
+                                            \draw (65.5,-39.8) node {$\textcolor{red}{new}$};
+                                            \draw [black] (45.7,-39.2) circle (3);
+                                            \draw (45.7,-39.2) node {$subtree$};
+                                            \draw [black] (77.4,-39.2) circle (3);
+                                            \draw (77.4,-39.2) node {$subtree$};
+                                            \draw [black] (16.98,-14.59) -- (4.22,-36.31);
+                                            \fill [black] (4.22,-36.31) -- (5.06,-35.88) -- (4.19,-35.37);
+                                            \draw [black] (20.14,-14.51) -- (23.96,-20.39);
+                                            \fill [black] (23.96,-20.39) -- (23.94,-19.44) -- (23.11,-19.99);
+                                            \draw [black] (21.03,-33.88) -- (23.77,-37.42);
+                                            \fill [black] (23.77,-37.42) -- (23.68,-36.49) -- (22.88,-37.1);
+                                            \draw [black] (17.46,-33.95) -- (15.04,-37.35);
+                                            \fill [black] (15.04,-37.35) -- (15.91,-36.99) -- (15.09,-36.41);
+                                            \draw [black] (27.29,-25.38) -- (34.81,-36.42);
+                                            \fill [black] (34.81,-36.42) -- (34.77,-35.48) -- (33.95,-36.04);
+                                            \draw [black] (23.81,-25.31) -- (20.99,-29.09);
+                                            \fill [black] (20.99,-29.09) -- (21.87,-28.75) -- (21.07,-28.15);
+                                            \draw [black] (18.5,-4.6) -- (18.5,-9);
+                                            \fill [black] (18.5,-9) -- (19,-8.2) -- (18,-8.2);
+                                            \draw [red] (58.61,-12.61) -- (51.09,-18.29);
+                                            \fill [red] (51.09,-18.29) -- (52.03,-18.21) -- (51.43,-17.41);
+                                            \draw (53.07,-14.95) node [above] ;
+                                            \draw [red] (63.4,-12.6) -- (71,-18.3);
+                                            \fill [red] (71,-18.3) -- (70.66,-17.42) -- (70.06,-18.22);
+                                            \draw (65.42,-15.95) node [below];
+                                            \draw [black] (61,-2.7) -- (61,-7.8);
+                                            \fill [black] (61,-7.8) -- (61.5,-7) -- (60.5,-7);
+                                            \draw [red] (50.82,-22.22) -- (55.18,-26.58);
+                                            \fill [red] (55.18,-26.58) -- (54.97,-25.66) -- (54.26,-26.37);
+                                            \draw (51.2,-24.88) node [below] ;
+                                            \draw [red] (71.37,-22.31) -- (67.53,-26.49);
+                                            \fill [red] (67.53,-26.49) -- (68.44,-26.24) -- (67.7,-25.56);
+                                            \draw (68.91,-22.94) node [left];
+                                            \draw [black] (48.23,-23.06) -- (46.17,-36.24);
+                                            \fill [black] (46.17,-36.24) -- (46.78,-35.52) -- (45.8,-35.37);
+                                            \draw [black] (65.5,-31.7) -- (65.5,-36.8);
+                                            \fill [black] (65.5,-36.8) -- (66,-36) -- (65,-36);
+                                            \draw [black] (74.01,-23.04) -- (76.79,-36.26);
+                                            \fill [black] (76.79,-36.26) -- (77.11,-35.38) -- (76.13,-35.58);
+                                            \draw [red] (25.6,-42.8) -- (25.6,-47.5);
+                                            \fill [red] (25.6,-47.5) -- (26.1,-46.7) -- (25.1,-46.7);
+                                    \end{tikzpicture}
+                            \end{center}
+                                   Clearly, we only need to update nodes $A$, $B$ and $C$.\\
+                                 $temp.sum = A.sum$, \ $temp.numNodes = A.numNodes$;\\
+                                $A.sum = A.sum - B.sum + E.sum$, \ $A.numNodes = A.numNodes - B.numNodes + E.numNodes$;\\	
+                                 $B.sum = B.sum - C.sum + F.sum$, \ $B.numNodes = B.numNodes - C.numNodes + F.numNodes$;\\
+                                $C.sum = temp.sum$, $C.numNodes = temp.numNodes$.\\
+                                   \item Case 3:
+                                    \begin{center}
+                                            \begin{tikzpicture}[scale=0.2]
+                                          		  \tikzstyle{every node}+=[inner sep=0pt]
+                                                    \draw [black] (18.5,-12) circle (3);
+                                                    \draw (18.5,-12) node {$A$};
+                                                    \draw [black] (2.7,-38.9) circle (3);
+                                                    \draw (2.7,-38.9) node {$subtree$};
+                                                    \draw [black] (25.6,-22.9) circle (3);
+                                                    \draw (25.6,-22.9) node {$B$};
+                                                    \draw [black] (19.2,-31.5) circle (3);
+                                                    \draw (19.2,-31.5) node {$C$};
+                                                    \draw [black] (36.5,-38.9) circle (3);
+                                                    \draw (36.5,-38.9) node {$subtree$};
+                                                    \draw [black] (13.3,-39.8) circle (3);
+                                                    \draw (13.3,-39.8) node {$E$};
+                                                    \draw [black] (25.6,-39.8) circle (3);
+                                                    \draw (25.6,-39.8) node {$F$};
+                                                    \draw [red] (13.3,-50.6) circle (3);
+                                                    \draw (13.3,-50.6) node {$\textcolor{red}{new}$};
+                                                    \draw [black] (61,-10.8) circle (3);
+                                                    \draw (61,-10.8) node {$C$};
+                                                    \draw [black] (48.7,-20.1) circle (3);
+                                                    \draw (48.7,-20.1) node {$A$};
+                                                    \draw [black] (73.4,-20.1) circle (3);
+                                                    \draw (73.4,-20.1) node {$B$};
+                                                    \draw [black] (57.3,-28.7) circle (3);
+                                                    \draw (57.3,-28.7) node {$E$};
+                                                    \draw [black] (65.5,-28.7) circle (3);
+                                                    \draw (65.5,-28.7) node {$F$};
+                                                    \draw [red] (57.3,-39.8) circle (3);
+                                                    \draw (57.3,-39.8) node {$\textcolor{red}{new}$};
+                                                    \draw [black] (45.7,-39.2) circle (3);
+                                                    \draw (45.7,-39.2) node {$subtree$};
+                                                    \draw [black] (77.4,-39.2) circle (3);
+                                                    \draw (77.4,-39.2) node {$subtree$};
+                                                    \draw [black] (16.98,-14.59) -- (4.22,-36.31);
+                                                    \fill [black] (4.22,-36.31) -- (5.06,-35.88) -- (4.19,-35.37);
+                                                    \draw [black] (20.14,-14.51) -- (23.96,-20.39);
+                                                    \fill [black] (23.96,-20.39) -- (23.94,-19.44) -- (23.11,-19.99);
+                                                    \draw [black] (21.03,-33.88) -- (23.77,-37.42);
+                                                    \fill [black] (23.77,-37.42) -- (23.68,-36.49) -- (22.88,-37.1);
+                                                    \draw [black] (17.46,-33.95) -- (15.04,-37.35);
+                                                    \fill [black] (15.04,-37.35) -- (15.91,-36.99) -- (15.09,-36.41);
+                                                    \draw [black] (27.29,-25.38) -- (34.81,-36.42);
+                                                    \fill [black] (34.81,-36.42) -- (34.77,-35.48) -- (33.95,-36.04);
+                                                    \draw [black] (23.81,-25.31) -- (20.99,-29.09);
+                                                    \fill [black] (20.99,-29.09) -- (21.87,-28.75) -- (21.07,-28.15);
+                                                    \draw [black] (18.5,-4.6) -- (18.5,-9);
+                                                    \fill [black] (18.5,-9) -- (19,-8.2) -- (18,-8.2);
+                                                    \draw [red] (58.61,-12.61) -- (51.09,-18.29);
+                                                    \fill [red] (51.09,-18.29) -- (52.03,-18.21) -- (51.43,-17.41);
+                                                    \draw (53.07,-14.95) node [above];
+                                                    \draw [red] (63.4,-12.6) -- (71,-18.3);
+                                                    \fill [red] (71,-18.3) -- (70.66,-17.42) -- (70.06,-18.22);
+                                                    \draw (65.42,-15.95) node [below];
+                                                    \draw [black] (61,-2.7) -- (61,-7.8);
+                                                    \fill [black] (61,-7.8) -- (61.5,-7) -- (60.5,-7);
+                                                    \draw [red] (50.82,-22.22) -- (55.18,-26.58);
+                                                    \fill [red] (55.18,-26.58) -- (54.97,-25.66) -- (54.26,-26.37);
+                                                    \draw (51.2,-24.88) node [below];
+                                                    \draw [red] (71.37,-22.31) -- (67.53,-26.49);
+                                                    \fill [red] (67.53,-26.49) -- (68.44,-26.24) -- (67.7,-25.56);
+                                                    \draw (68.91,-22.94) node [left] ;
+                                                    \draw [black] (48.23,-23.06) -- (46.17,-36.24);
+                                                    \fill [black] (46.17,-36.24) -- (46.78,-35.52) -- (45.8,-35.37);
+                                                    \draw [black] (74.01,-23.04) -- (76.79,-36.26);
+                                                    \fill [black] (76.79,-36.26) -- (77.11,-35.38) -- (76.13,-35.58);
+                                                    \draw [black] (57.3,-31.7) -- (57.3,-36.8);
+                                                    \fill [black] (57.3,-36.8) -- (57.8,-36) -- (56.8,-36);
+                                                    \draw [red] (13.3,-42.8) -- (13.3,-47.6);
+                                                    \fill [red] (13.3,-47.6) -- (13.8,-46.8) -- (12.8,-46.8);
+                                                    \draw (12.8,-45.2) node [left];
+                                            \end{tikzpicture}
+                                    \end{center}
+                                 Also, we only need to update nodes $A$, $B$ and $C$.\\
+                                 $temp.sum = A.sum$, \ $temp.numNodes = A.numNodes$;\\
+                                $A.sum = A.sum - B.sum + E.sum$, \ $A.numNodes = A.numNodes - B.numNodes + E.numNodes$;\\	
+                                 $B.sum = B.sum - C.sum + F.sum$, \ $B.numNodes = B.numNodes - C.numNodes + F.numNodes$;\\
+                                $C.sum = temp.sum$, \ $C.numNodes = temp.numNodes$.\\
+			\end{itemize}
+		The right rotation around A is the same.\\
+		Therefore, it takes constant time to update all nodes which are changed in the rotation, which means rotation is still in order $\mathcal {O}(1)$. Hence,  worst-case running time is still $\mathcal {O}(log(n))$
+		\item For deletion, suppose we delete a node $x$, and $x = (x.key, x.numNode, x.sum)$ 
+		\begin{itemize}  [label={}]
+			\item
+			\item Delete(root, x):
+			\item	 \ \ \ \ For all parents P of x:
+			\item  \ \ \ \ \ \ \ \ P.sum -$=$ x.key \textcolor{green} {\# update all x's parents' sum}
+			\item  \ \ \ \ \ \ \ \ P.numNodes -$=$ 1 \textcolor{green} {\# update all x's parents' numNodes}
+			\item \ \ \ \ if x.left = Node:
+			\item \ \ \ \ \ \ \ \ Transplant(root, x, x.right)
+			\item \ \ \ \ if x.right $=$ Node:
+			\item \ \ \ \ \ \ \ \ Transplant(root, x, x.left)	
+			\item \ \ \ \ else: 
+			\item \ \ \ \ \ \ \ \ y $\leftarrow$ TreeMinimum(x.right)
+			\item \ \ \ \ \ \ \ \ For all parents P of y in subtrees of x:
+			\item  \ \ \ \ \ \ \ \ \ \ \ \ P.sum -$=$ x.key \textcolor{green} {\# update all y's parents' sum (which are in x's subtrees) }
+
+			\item \ \ \ \ if x.left = Node:
+			\item  \ \ \ \ \ \ \ \ \ \ \ \ P.numNodes -$=$ 1  \textcolor{green} {\# update all y's parents' numNodes (which are in x's subtrees) }
+			\item  \ \ \ \ \ \ \ \ \ \ y.sum $=$ x.sum $-$ x.key $+$ y.key \textcolor{green} {\# update  y.sum}
+			\item  \ \ \ \ \ \ \ \ \ \ y.numNodes $=$ x.numNodes $-$ 1 \textcolor{green} {\# update  y.numNodes}
+			\item \ \ \ \ \ \ \ \  if y.p $\neq$ x:
+			\item  \ \ \ \ \ \ \ \ \ \ \ \  Transplant(root, y, y.right)
+			\item \ \ \ \ \ \ \ \ \ \ \ \ \ y.right $\leftarrow$ x.right y 
+			\item \ \ \ \ \ \ \ \ \ \ \ \ \ y.right.p $\leftarrow$ y
+			\item \ \ \ \ \ \ \ \ Transplant(root, x, y)
+			\item \ \ \ \ \ \ \ \ y.left $\leftarrow$ x.left
+			\item \ \ \ \ \ \ \ \ y.left.p $\leftarrow$ y
+			\item \ \ \ \ return root
+		\end{itemize}
+		Clearly, in a AVL tree to get all parents of a node $x$, takes $\mathcal{O}({log(n)})$ in the worst case, and updates their take constant time; therefore deletion is still $\mathcal{O}({log(n)})$ . Also, because rotation likes previous (a),  still takes constant time; hence, the worst time run time is still in order  $\mathcal{O}({log(n)})$.
+	\end{enumerate}
+
+\end{enumerate}
+
+\end{document}
